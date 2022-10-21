@@ -1,19 +1,7 @@
-// Unique ID for the className.
 const MOUSE_VISITED_CLASSNAME = 'crx_mouse_visited';
 
 // Previous dom, that we want to track, so we can remove the previous styling.
 let prevDOM = null;
-
-chrome.runtime.onMessage.addListener(
-    function (message, sender, sendResponse) {
-        console.log(sender.tab ?
-            "from a content script:" + sender.tab.url :
-            "from the extension");
-        
-        console.log(message);
-        sendResponse({target: 'teste'})
-    }
-);
 
 const mouseHandler = (e) => {
     const srcElement = e.target;
@@ -27,10 +15,7 @@ const mouseHandler = (e) => {
     prevDOM = srcElement;
 }
 
-// Mouse listener for any move event on the current document.
-document.addEventListener('mousemove', mouseHandler, false);
-
-document.addEventListener('click', (e) => {
+const clickHandler = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -40,7 +25,26 @@ document.addEventListener('click', (e) => {
     console.log('selected el: ', e.target);
     let generatedXpath = getXPath(e.target);
     console.log('generatedXpath: ', generatedXpath);
-});
+}
+
+chrome.runtime.onMessage.addListener(
+    function (message, sender, sendResponse) {
+
+        const isPickingActive = message?.active;
+        console.log(message?.active);
+        sendResponse({target: 'teste'});
+
+        if(isPickingActive) {
+            console.log('enable picking')
+            document.addEventListener('mousemove', mouseHandler, false);
+            document.addEventListener('click', clickHandler, false);
+        } else {
+            console.log('disable picking')
+            document.removeEventListener('mousemove', mouseHandler); 
+            document.removeEventListener('click', clickHandler);  
+        }
+    }
+);
 
 function getXPath(el) {
     let nodeElem = el;

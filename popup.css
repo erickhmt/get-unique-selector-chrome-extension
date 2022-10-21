@@ -2,19 +2,30 @@ body {
   width: 20rem;
 }
 
-#btnPicker {
+.btn {
   border: none;
   border-radius: 5px;
   width: 100%;
   padding: 10px 15px;
-  background: #2364a9;
   color: #fff;
   transition: .2s;
   cursor: pointer;
 }
 
-#btnPicker:hover {
-  background: #17537b;
+#btnStart {
+  background: #2364a9;
+}
+
+#btnStart:hover {
+  background: #1d4d81;
+}
+
+#btnCancel {
+  background: #cd571c;
+}
+
+#btnCancel:hover {
+  background: #a0471a;
 }
 
 .data {
