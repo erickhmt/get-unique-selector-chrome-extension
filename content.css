@@ -1,4 +1,21 @@
 .crx_mouse_visited {
   outline: 2px solid rgb(206, 78, 23);
   background: rgba(0,0,0,0.3);
+  border-radius: 5px;
+}
+
+.floating-div {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+  cursor: pointer;
+  display: none;
+  font-family: Arial, sans-serif;
+  pointer-events: none;
 }

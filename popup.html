@@ -1,23 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="./popup.css" />
-      </head>
-    <body>     
-          <h1>Find unique selector</h1>
-          <div class="data">
-            <label for="uniqueSelector">Unique selector: </label>
-            <span id="uniqueSelector">Picked element</span>
-            <br />
-            <label for="xpath">Xpath: </label>
-            <span id="xpath">Picked element</span>
-          </div>
-          <button id="btnStart" class="btn">Pick element</button>
-          <button id="btnCancel" class="btn" style="display: none">Cancel</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>     
+    <h1>Find unique selector</h1>
+    <div class="data">
+      <p>
+        Click on <b>Start picking</b> button and then click on the element you want to find the unique selector for.
+      </p>
+    </div>
+    <button id="btnStart" class="btn">Start picking</button>
+    <button id="btnCancel" class="btn" style="display: none">Cancel</button>
 
-        <script src="popup.js" type="module"></script>
-    </body>
+    <script src="popup.js" type="module"></script>
+  </body>
 </html>

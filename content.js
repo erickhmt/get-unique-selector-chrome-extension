@@ -41,11 +41,14 @@ const clickHandler = (e) => {
     document.removeEventListener('click', clickHandler);
 
     let generatedXpath = getXPath(e.target);
-    alert('Xpath: ' + generatedXpath);
+    let bestSelector = getBestUniqueSelector(e.target);
+    alert(`Best Unique Selector: ${bestSelector}\nXPath: ${generatedXpath}`);
 }
 
 chrome.runtime.onMessage.addListener(message => {
     const isPickingEnabled = message?.active;
+
+    console.log('isPickingEnabled: ', isPickingEnabled)
 
     if (isPickingEnabled) {
         addEventListeners();
@@ -57,6 +60,51 @@ chrome.runtime.onMessage.addListener(message => {
         }
     }
 });
+
+const getBestUniqueSelector  = (el) => {
+    if (!el) return 'no valid element';
+
+    // ID Selector
+    if (el.id) return `#${el.id}`;
+
+    // Class Selector
+    const classes = el.classList.length ? `.${Array.from(el.classList).join('.')}` : '';
+    if (classes && document.querySelectorAll(classes).length === 1) return classes;
+
+    // Name Attribute for form elements
+    if (el.name && document.querySelectorAll(`[name="${el.name}"]`).length === 1) return `[name="${el.name}"]`;
+
+    // CSS Selector
+    let cssPath = cssSelector(el);
+    if (cssPath && document.querySelectorAll(cssPath).length === 1) return cssPath;
+
+    // XPath as a fallback
+    return getXPath(el);
+}
+
+const cssSelector = el => {
+    if (!el) return '';
+    let path = [];
+    while (el.nodeType === Node.ELEMENT_NODE) {
+        let selector = el.nodeName.toLowerCase();
+        if (el.id) {
+            selector += `#${el.id}`;
+            path.unshift(selector);
+            break;
+        } else if (el.className) {
+            selector += `.${Array.from(el.classList).join('.')}`;
+        }
+        let sib = el, nth = 1;
+        while (sib = sib.previousElementSibling) {
+            if (sib.nodeName.toLowerCase() == selector)
+                nth++;
+        }
+        if (nth != 1) selector += `:nth-of-type(${nth})`;
+        path.unshift(selector);
+        el = el.parentNode;
+    }
+    return path.join(' > ');
+};
 
 const getXPath = el => {
     if (!el) return '';
