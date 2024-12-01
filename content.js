@@ -3,6 +3,7 @@
 const MOUSE_VISITED_CLASSNAME = "crx_mouse_visited";
 
 let previousHoveredElement = null;
+let floatingDiv = null;
 
 const mouseHandler = (e) => {
   const srcElement = e.target;
@@ -12,6 +13,13 @@ const mouseHandler = (e) => {
   if (previousHoveredElement) {
     previousHoveredElement.classList.remove(MOUSE_VISITED_CLASSNAME);
   }
+
+  if(floatingDiv !== null) {
+    floatingDiv.style.display = 'block';
+    floatingDiv.style.top = `${e.clientY + 20}px`;
+    floatingDiv.style.left = `${e.clientX + 10}px`;
+    floatingDiv.innerText = 'Selector: ' + getBestUniqueSelector(e.target);
+}
 
   srcElement.classList.add(MOUSE_VISITED_CLASSNAME);
   previousHoveredElement = srcElement;
@@ -31,6 +39,7 @@ const clickHandler = (e) => {
   e.preventDefault();
   e.stopPropagation();
   removeEventListeners();
+  removeFloatingDiv();
 
   if (previousHoveredElement) {
     document.removeEventListener("mousemove", mouseHandler);
@@ -38,9 +47,10 @@ const clickHandler = (e) => {
   }
   document.removeEventListener("click", clickHandler);
 
-  let generatedXpath = getXPath(e.target);
   let bestSelector = getBestUniqueSelector(e.target);
-  alert(`Best Unique Selector: ${bestSelector}\nXPath: ${generatedXpath}`);
+
+  navigator.clipboard.writeText(bestSelector);
+  alert(`Best Unique Selector: ${bestSelector}. Copied to clipboard!`);
 };
 
 chrome.runtime.onMessage.addListener((message) => {
@@ -48,14 +58,31 @@ chrome.runtime.onMessage.addListener((message) => {
 
   if (isPickingEnabled) {
     addEventListeners();
+    addFloatingDiv();
   } else {
     removeEventListeners();
+    removeFloatingDiv();
 
     if (previousHoveredElement) {
       previousHoveredElement.classList.remove(MOUSE_VISITED_CLASSNAME);
     }
   }
 });
+
+const addFloatingDiv = () => {
+  floatingDiv = document.createElement('div');
+  floatingDiv.className = 'floating-div';
+  floatingDiv.innerText = 'Selector: ';
+
+  document.body.appendChild(floatingDiv);
+}
+
+const removeFloatingDiv = () => {
+  if(floatingDiv !== null) {
+      floatingDiv.remove();
+      floatingDiv = null;
+  }
+}
 
 const getBestUniqueSelector = (el) => {
   if (!el) return "no valid element";
